@@ -1,0 +1,79 @@
+import pandas as pd
+import seaborn as sns
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
+df = sns.load_dataset('titanic')
+
+print(df.head())
+
+print(df.isnull().sum())
+
+df = df[['age', 'fare', 'sex', 'class', 'embarked', 'survived']]
+
+num_imputer = SimpleImputer(strategy='mean')
+
+df[['age']] = num_imputer.fit_transform(df[['age']])
+
+cat_imputer = SimpleImputer(strategy='most_frequent')
+
+df[['embarked']] = cat_imputer.fit_transform(df[['embarked']])
+
+encoder = LabelEncoder()
+
+df['sex'] = encoder.fit_transform(df['sex'])
+
+df['class'] = encoder.fit_transform(df['class'])
+
+df['embarked'] = encoder.fit_transform(df['embarked'])
+
+scaler = StandardScaler()
+
+df[['age', 'fare']] = scaler.fit_transform(df[['age', 'fare']])
+
+print(df.head())
+
+print(df.info())
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(8, 6))
+
+sns.heatmap(df.corr(), annot=True, cmap='coolwarm', fmt='.2f')
+
+plt.title('Correlation Heatmap')
+
+plt.show()
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(7, 5))
+
+sns.countplot(
+    x=df['class'].astype(str),
+    hue=df['survived'].astype(str)
+)
+
+plt.title('Survival by Passenger Class')
+plt.xlabel('Passenger Class')
+plt.ylabel('Number of Passengers')
+plt.legend(title='Survived', labels=['No', 'Yes'])
+plt.show()
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(7, 5))
+
+sns.countplot(
+    x=df['sex'].astype(str),
+    hue=df['survived'].astype(str)
+)
+
+plt.title('Survival by Sex')
+plt.xlabel('Sex (0 = Female, 1 = Male)')
+plt.ylabel('Number of Passengers')
+plt.legend(title='Survived', labels=['No', 'Yes'])
+plt.show()
